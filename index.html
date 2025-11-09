@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ギャルマインド診断｜10段階・100点満点</title>
+  <meta name="description" content="19問に1〜5で答えるだけ。最後のQ19はスコア2倍扱いで100点満点！10段階レベルと画像が出る診断。">
+  <meta property="og:title" content="ギャルマインド診断" />
+  <meta property="og:description" content="19問に1〜5で回答→100点満点で10段階レベル診断。" />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="./assets/og_default.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <style>
+    :root{--bg:#0f0f12;--card:#17171c;--ink:#f5f7fb;--muted:#b7bac6;--brand:#ff5bd5;--accent:#7cf7ff}
+    *{box-sizing:border-box}
+    body{margin:0;background:
+      radial-gradient(900px 700px at -10% -10%,#18151f,transparent),
+      radial-gradient(900px 700px at 110% -10%,#11202a,transparent),
+      var(--bg);
+      color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Noto Sans JP,Arial}
+    a{color:var(--accent);text-decoration:none}
+    .wrap{max-width:880px;margin:40px auto;padding:0 16px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 20px 40px rgba(0,0,0,.35)}
+    header{padding:28px 24px 0}
+    h1{font-size:28px;margin:0}
+    .pill{display:inline-block;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;background:linear-gradient(90deg,var(--brand),#9b5bff);padding:6px 10px;border-radius:999px;color:#111;margin-bottom:8px}
+    .lead{color:var(--muted);margin:8px 0 18px}
+    .body{padding:8px 24px 24px}
+    .grid{display:grid;gap:16px}
+    @media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}
+    .q{padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(0,0,0,.15)}
+    .q h3{font-size:16px;margin:0 0 10px}
+    .scale{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .scale label{display:flex;align-items:center;gap:8px;background:#121217;border:1px solid rgba(255,255,255,.08);padding:8px 10px;border-radius:10px;cursor:pointer}
+    .scale input{accent-color:var(--brand)}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+    .btn{background:linear-gradient(90deg,var(--brand),#9b5bff);color:#111;border:none;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer}
+    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--ink)}
+    .muted{color:var(--muted)}
+    .result{display:none}
+    .result.active{display:block}
+    .res-card{display:grid;gap:16px;grid-template-columns:160px 1fr;align-items:center}
+    .res-card img{width:100%;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#111}
+    .small{font-size:12px}
+    footer{opacity:.7;text-align:center;margin:28px 0}
+    .hr{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);margin:16px 0}
+    .badge{display:inline-block;background:#0c0c10;border:1px solid rgba(255,255,255,.12);padding:4px 8px;border-radius:999px;font-size:12px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;border:1px solid rgba(255,255,255,.18);padding:10px 14px;border-radius:10px;display:none}
+    .toast.show{display:block}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <span class="pill">ギャル式®︎</span>
+        <h1>ギャルマインド診断（10段階・100点満点）</h1>
+        <p class="lead">19問に1〜5で回答 → <b>Q1〜18は5点満点</b>、<b>Q19だけ2倍</b>で計算して<b>100点満点</b>。スコアに応じて<b>10段階レベル画像</b>を表示します。</p>
+      </header>
+      <div class="body">
+        <p class="muted">所要：2分／選択式のみ。直近の結果は端末に保存（localStorage）。任意でGoogleスプレッドシートに保存も可能（GAS設定）。</p>
+        <div class="hr"></div>
+
+        <form id="quiz" class="grid" autocomplete="off"></form>
+
+        <div class="hr"></div>
+        <div class="actions">
+          <button id="submitBtn" class="btn" type="button">判定する</button>
+          <button id="resetBtn" class="btn secondary" type="button">リセット</button>
+          <span class="muted small">※各設問は1〜5で必須入力</span>
+        </div>
+
+        <section id="result" class="result" aria-live="polite">
+          <div class="hr"></div>
+          <div class="res-card">
+            <img id="resultImg" alt="診断結果画像" src="" />
+            <div>
+              <h2 id="resultTitle">結果</h2>
+              <p id="resultDesc" class="muted"></p>
+              <div class="chips" style="margin:10px 0">
+                <span id="chipLevel" class="badge"></span>
+                <span id="chipScore" class="badge"></span>
+              </div>
+              <div class="actions">
+                <button id="copyLink" class="btn secondary" type="button">結果リンクをコピー</button>
+                <a id="tweet" class="btn" href="#" target="_blank" rel="noopener">Xでシェア</a>
+              </div>
+              <p class="small muted" style="margin-top:8px">画像は <code>./assets/img_lv{1..10}.png</code> を用意してください。</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+    <footer class="small">© CGOドットコム｜ギャル式®︎</footer>
+  </div>
+
+  <div class="toast" id="toast">リンクをコピーしました！</div>
+
+  <script>
+  // ====== 設定 ======
+  const QUESTIONS = [
+    '会社の中で「やってみたい💝」と思うことがある～～～？',
+    '今やっている仕事スキ？★',
+    '今よりもっと👆アゲ👆になりたい？',
+    '「私がやりたい仕事はこれダヨ❕」って言える？',
+    '社内で「この人の話聞いてみたい☺」って思ったときに、すぐに連絡できる✉？',
+    '自分最高ジャン～♥って思う？',
+    '社内飲み会（食事会）で、周りに合わせず、自分が好きな食べ物/飲み物🥃を頼める？',
+    'ステキな意見を言った人に「いいじゃん～🎵」って言える？',
+    '多少無理なことでも「ウチらならできるっしょ💪」って思える？',
+    '自分よりエライ人にも、自信をもって意見が言える✨？',
+    '自分らしい服や持ち物👗を会社でも身に着けている？',
+    '多少凹んでも「這い上がるぞ💪」と力が湧いてくる～？',
+    '自分と違う意見が出たとき「それちがくない～？💦」って言える？',
+    'いやなことにはすかさず「NO❕❕❕」って言える？',
+    '自分はなにか成し遂げられちゃうかも🌎と思ってる～？',
+    '自分の「これだけは譲れないッ❣」ってモノ/コトってある～？',
+    '考えるより体動いちゃう～～～～～？💃',
+    '自分のスキ💝なところ３つ以上いえる～？',
+    '自分の心には「自分軸・直感性・ポジティブ思考」がある～～～？' // Q19（×2倍）
+  ];
+
+  const GAS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL'; // 任意: 回答ログ保存先
+
+  // ====== 描画 ======
+  const quizEl = document.getElementById('quiz');
+  QUESTIONS.forEach((text, i)=>{
+    const id = `q${i+1}`;
+    const block = document.createElement('div');
+    block.className = 'q';
+    block.innerHTML = `
+      <h3>Q${i+1}. ${text}</h3>
+      <div class="scale" role="group" aria-label="${text}">
+        ${[1,2,3,4,5].map(v=>`<label><input type="radio" name="${id}" value="${v}" required> ${v}</label>`).join('')}
+        <span class="muted small">（1 = 当てはまらない ／ 5 = とても当てはまる）</span>
+      </div>`;
+    quizEl.appendChild(block);
+  });
+
+  // ====== スコア計算（100点満点・10段階） ======
+  function getScore(){
+    let total = 0;
+    for(let i=1;i<=QUESTIONS.length;i++){
+      const sel = document.querySelector(`input[name="q${i}"]:checked`);
+      if(!sel) return null;
+      const v = Number(sel.value);
+      if(i === 19){
+        total += v * 2; // Q19は2倍で10点満点扱い
+      }else{
+        total += v;
+      }
+    }
+    return total; // 最小19, 最大100
+  }
+
+  function scoreToLevel(score){
+    if(score <= 29) return 1;
+    if(score <= 39) return 2;
+    if(score <= 49) return 3;
+    if(score <= 59) return 4;
+    if(score <= 69) return 5;
+    if(score <= 79) return 6;
+    if(score <= 84) return 7;
+    if(score <= 89) return 8;
+    if(score <= 94) return 9;
+    return 10; // 95〜100
+  }
+
+  function renderResult(score){
+    const level = scoreToLevel(score);
+    const img = `./assets/img_lv${level}.png`;
+    const title = 'あなたのギャルマインド結果';
+    const desc = `スコア：<b>${score} / 100</b>　レベル：<b>Lv${level}</b>`;
+
+    document.getElementById('resultImg').src = img;
+    document.getElementById('resultImg').alt = `Lv${level} の結果画像`;
+    document.getElementById('resultTitle').textContent = title;
+    document.getElementById('resultDesc').innerHTML = desc;
+    document.getElementById('chipLevel').textContent = `Lv${level}`;
+    document.getElementById('chipScore').textContent = `${score}/100`;
+
+    // シェア用URL
+    const payload = btoa(JSON.stringify({s:score,l:level}));
+    const shareUrl = new URL(location.href.split('#')[0]);
+    shareUrl.searchParams.set('r', payload);
+
+    document.getElementById('copyLink').onclick = async ()=>{
+      await navigator.clipboard.writeText(shareUrl.toString());
+      toast('リンクをコピーしました！');
+    };
+    document.getElementById('tweet').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent('【ギャルマインド診断】結果でた♡')}&url=${encodeURIComponent(shareUrl.toString())}`;
+
+    document.getElementById('result').classList.add('active');
+
+    // 保存
+    localStorage.setItem('galmind:last', JSON.stringify({score, level, ts: Date.now()}));
+
+    // 任意ログ送信
+    sendLog({score, level});
+  }
+
+  async function sendLog(model){
+    if(!GAS_URL || GAS_URL.startsWith('YOUR_')) return;
+    try{
+      await fetch(GAS_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({event:'submit', result:model, meta:{href:location.href, ref:document.referrer}})});
+    }catch(e){ console.warn('log failed', e); }
+  }
+
+  // ====== ボタン ======
+  document.getElementById('submitBtn').onclick = ()=>{
+    const score = getScore();
+    if(score == null){ alert('未回答の設問があります'); return; }
+    renderResult(score);
+    document.getElementById('result').scrollIntoView({behavior:'smooth'});
+  };
+
+  document.getElementById('resetBtn').onclick = ()=>{
+    document.querySelectorAll('#quiz input[type="radio"]:checked').forEach(el=>el.checked=false);
+    document.getElementById('result').classList.remove('active');
+    window.history.replaceState({}, '', location.pathname);
+  };
+
+  // ====== 復元（?r=...） ======
+  (function restore(){
+    const r = new URLSearchParams(location.search).get('r');
+    if(!r) return;
+    try{
+      const obj = JSON.parse(atob(r));
+      if(typeof obj.score === 'number' || typeof obj.s === 'number'){
+        const s = obj.score ?? obj.s;
+        renderResult(s);
+        document.getElementById('result').scrollIntoView({behavior:'smooth'});
+      }
+    }catch(e){ console.warn('restore failed', e); }
+  })();
+
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 1600);
+  }
+  </script>
+
+  <!-- =========================
+  Google Apps Script（無料バックエンド任意）
+  ========================== -->
+  <!--
+function doPost(e){
+  try{
+    var body = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.openById('YOUR_SHEET_ID');
+    var sh = ss.getSheetByName('responses') || ss.insertSheet('responses');
+    if (sh.getLastRow() === 0){
+      sh.appendRow(['ts','event','score','level','href','ref','ua']);
+    }
+    var now = new Date();
+    var m = body.result || {};
+    var meta = body.meta || {};
+    sh.appendRow([ now, body.event||'submit', m.score||m.s, m.level||m.l, meta.href||'', meta.ref||'', e.parameter.ua || '' ]);
+    return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
+  }catch(err){
+    return ContentService.createTextOutput(JSON.stringify({ok:false,error:String(err)})).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+function doGet(){ return ContentService.createTextOutput('ok'); }
+  -->
+
+</body>
+</html>
+
