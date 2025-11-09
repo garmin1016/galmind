@@ -70,7 +70,7 @@
     /* Heart rating */
     .hearts{display:flex;gap:8px;flex-wrap:wrap}
     .heart{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;cursor:pointer;border:1.6px solid #ffd0eb;background:#fff;transition:transform .08s ease, box-shadow .2s}
-    .heart[data-active="true"], .heart:hover{box-shadow:0 8px 20px rgba(255,110,190,.27); transform:translateY(-1px);background:linear-gradient(180deg,#fff,#fff0f7)}
+    .heart[data-active="true"], .heart:hover{box-shadow:0 8px 24px rgba(255,110,190,.35); transform:translateY(-1px) scale(1.03);background:linear-gradient(180deg,#fff,#ffe9f7); border-color:#ffb6e6}
     .heart span{font-size:22px}
 
     .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
@@ -88,6 +88,8 @@
     .comment{background:linear-gradient(180deg,#fff,#fff5fb);border:2px solid #ffd0eb;border-radius:18px;padding:12px}
     .muted{color:#7a5870}
     footer{text-align:center;color:#8a6a7a;opacity:.85;padding:18px}
+    @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-3px)}40%{transform:translateX(3px)}60%{transform:translateX(-2px)}80%{transform:translateX(2px)}}
+    .error{border-color:#ff6fbf!important; animation:shake .25s linear 1}
   </style>
 </head>
 <body>
@@ -101,6 +103,16 @@
         <p class="lead">1問ずつ、ハートでサクサク答えてね💅 Q1-18は<mark>💗×5段階</mark>、Q19は<mark>💗×10段階</mark>だよ！</p>
         <div class="progress"><div class="bar"><i id="bar"></i></div><div class="step"><span id="stepNow">0</span>/<span id="stepMax">19</span></div></div>
       </header>
+
+      <!-- デバッグパネル（?debug=1 で表示） -->
+      <div id="dbg" style="display:none; position:sticky; top:8px; z-index:50; margin:8px 20px 0">
+        <div style="background:#fff7; backdrop-filter:blur(6px); border:2px dashed #ffc5ea; padding:8px; border-radius:12px; display:flex; gap:8px; flex-wrap:wrap">
+          <button class="btn subtle" type="button" id="dbgFill3">全部3で埋める</button>
+          <button class="btn subtle" type="button" id="dbgFillMax">全部MAXで埋めて結果へ</button>
+          <button class="btn subtle" type="button" id="dbgGoLast">最終問へジャンプ</button>
+          <span class="muted" id="dbgInfo"></span>
+        </div>
+      </div>
 
       <!-- 基本情報 -->
       <section class="section">
@@ -172,6 +184,7 @@
   <script>
     // ====== 設定 ======
     const GAS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL'; // 任意: 回答保存
+    const DEBUG = new URLSearchParams(location.search).get('debug')==='1';
 
     // 質問文：Q1-18 = 5段階（💗×5）、Q19 = 10段階（💗×10）
     const QUESTIONS = [
@@ -197,6 +210,7 @@
     ];
 
     const stepMax = QUESTIONS.length; // 19
+    if(DEBUG){ document.getElementById('dbg').style.display='block'; }
     document.getElementById('stepMax').textContent = stepMax;
     const qwrap = document.getElementById('qwrap');
     const bar = document.getElementById('bar');
@@ -223,6 +237,10 @@
             el.dataset.active = Number(el.dataset.val) <= i ? 'true':'false';
           });
           box.dataset.value = String(i);
+          // 次へ活性化
+          const btnNext = document.getElementById('next');
+          if(btnNext) btnNext.disabled = false;
+          box.classList.remove('error');
         };
         box.appendChild(b);
       }
@@ -260,6 +278,28 @@
       document.getElementById('nav').style.display = 'flex';
       document.getElementById('prev').disabled = (n===1);
       document.getElementById('next').textContent = (n===stepMax? '結果を見る✨':'次へ💅');
+      // 初期は選択されるまで無効化
+      const btnNext = document.getElementById('next');
+      btnNext.disabled = !current;
+
+      if(DEBUG){ document.getElementById('dbgInfo').textContent = `idx=${idx} n=${n} saved=${answers[n]||'-'}`; }
+    }</span>`;
+
+      const text = document.createElement('div');
+      text.className = 'qtext';
+      text.textContent = QUESTIONS[idx];
+
+      const heartsNum = (n === 19) ? 10 : 5;
+      const current = answers[n] ? Number(answers[n]) : 0;
+      const hearts = makeHearts(heartsNum, current);
+      hearts.id = 'hearts';
+
+      card.appendChild(head); card.appendChild(text); card.appendChild(hearts);
+      qwrap.appendChild(card);
+
+      document.getElementById('nav').style.display = 'flex';
+      document.getElementById('prev').disabled = (n===1);
+      document.getElementById('next').textContent = (n===stepMax? '結果を見る✨':'次へ💅');
     }
 
     function saveCurrent(){
@@ -268,9 +308,13 @@
       const v = Number(hearts?.dataset.value || 0);
       const needed = (n===19)?10:5;
       if(!v || v<1 || v>needed){
+        if(hearts){ hearts.classList.add('error'); setTimeout(()=>hearts.classList.remove('error'),400); }
         alert(`Q${n} のハートを選んでね💗`);
         return false;
       }
+      answers[n] = v;
+      return true;
+    }
       answers[n] = v;
       return true;
     }
@@ -379,20 +423,36 @@
       if(!name || !email){ alert('お名前とメールだけ入れてね💖'); return; }
       idx = 0; renderQuestion();
       document.getElementById('start').closest('.card').style.display='none';
+      if(DEBUG){ console.log('START'); }
     };
     document.getElementById('prev').onclick = ()=>{ if(idx<=0) return; if(saveCurrent()){ idx--; renderQuestion(); }};
     document.getElementById('next').onclick = ()=>{
       if(!saveCurrent()) return;
+      if(DEBUG){ console.log('NEXT before idx', idx); }
       if(idx>=stepMax-1){ showResult(); return; }
       idx++; renderQuestion();
+      if(DEBUG){ console.log('NEXT after idx', idx); }
     };
 
     // 復元（?r=...）
     (function restore(){
       const r = new URLSearchParams(location.search).get('r');
       if(!r) return;
-      try{ const obj = JSON.parse(atob(r)); if(typeof obj.s==='number'){ document.getElementById('start').closest('.card').style.display='none'; idx=stepMax-1; renderQuestion(); showResult(); } }catch(e){}
+      try{
+        const obj = JSON.parse(atob(r));
+        if(typeof obj.s==='number'){
+          document.getElementById('start').closest('.card').style.display='none';
+          idx=stepMax-1; renderQuestion(); showResult();
+        }
+      }catch(e){ if(DEBUG){ console.warn('restore failed', e); } }
     })();
+
+    // ===== Debug helpers =====
+    if(DEBUG){
+      document.getElementById('dbgFill3').onclick = ()=>{ for(let i=1;i<=19;i++){ answers[i] = (i===19)?5:3; } alert('全部3/最後は5で埋めたよ'); };
+      document.getElementById('dbgFillMax').onclick = ()=>{ for(let i=1;i<=19;i++){ answers[i] = (i===19)?10:5; } showResult(); };
+      document.getElementById('dbgGoLast').onclick = ()=>{ if(idx<0){ idx=0; } while(idx<stepMax-1){ if(!answers[idx+1]) answers[idx+1]=3; idx++; } renderQuestion(); };
+    }
   </script>
 
   <!-- =========================
@@ -418,3 +478,4 @@ function doGet(){ return ContentService.createTextOutput('ok'); }
   -->
 </body>
 </html>
+
