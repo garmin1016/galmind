@@ -191,7 +191,12 @@
     </section>
 
   </main>
-
+  
+<script>
+// === Google Sheets 送信用（あなたのGAS URLをそのまま入れる） ===
+const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwzrE23GIyyYh1iokhnogTfq83lhLmiS-06GDPBu_AfO9GbAEqjgAIPf4-SM0tm4BzYjQ/exec';
+</script>
+  
   <script>
     // ====== Data ======
     const QUESTIONS = [
@@ -333,6 +338,23 @@
           answers, score, lv, ts: Date.now()
         };
         localStorage.setItem('galmind_latest', JSON.stringify(profile));
+        // 例）localStorage 保存のすぐ下に追記する
+const payload = {
+  name: profile.name,
+  email: profile.email,
+  org: profile.org,
+  role: profile.role,
+  gender: profile.gender,
+  age: profile.age,
+  score: score,        // ← showResult() で計算済みの値を使う
+  level: lv,           // ← showResult() で出したレベル
+  answers: answers,    // 19問の回答オブジェクト
+  ua: navigator.userAgent,
+  page: location.href.split('?')[0],
+  referrer: document.referrer
+};
+sendToSheet(payload);
+        
       }catch(e){}
 
       // UI
@@ -399,5 +421,22 @@
       }
     })();
   </script>
-</body>
+  <script>
+async function sendToSheet(payload){
+  try{
+    await fetch(SHEET_ENDPOINT, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify(payload),
+      mode:'cors'
+    });
+    // 失敗してもUIは止めない
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+</script>
+
+</body>  
 </html>
