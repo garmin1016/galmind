@@ -418,19 +418,19 @@ sendToSheet(payload);
         document.getElementById('resultImg').src = `assets/result_level${lv}.png`;
         elIntro.classList.add('hidden'); elQuiz.classList.add('hidden'); elRes.classList.remove('hidden');
         updateProgress(19);
-      }
+     }
     })();
   </script>
-  <script>
+
+<script>
 async function sendToSheet(payload){
   try{
     await fetch(SHEET_ENDPOINT, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify(payload),
-      mode:'cors'
+      method: 'POST',
+      mode: 'no-cors',                        // ← プリフライト回避（GAS用）
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
     });
-    // 失敗してもUIは止めない
     return true;
   }catch(e){
     return false;
@@ -438,5 +438,6 @@ async function sendToSheet(payload){
 }
 </script>
 
-</body>  
+</body>
 </html>
+
