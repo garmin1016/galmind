@@ -1,249 +1,402 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>ギャルマインド診断｜10段階・100点満点</title>
-  <meta name="description" content="19問に1〜5で答えるだけ。最後のQ19はスコア2倍扱いで100点満点！10段階レベルと画像が出る診断。">
-  <meta property="og:title" content="ギャルマインド診断" />
-  <meta property="og:description" content="19問に1〜5で回答→100点満点で10段階レベル診断。" />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="./assets/og_default.png" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="description" content="ギャル×ビジネスの明るい診断UI🌈 19問に答えるだけ。Q1-18は5段階のハート、Q19は10段階で100点満点＆10段階レベル！">
+  <meta property="og:title" content="ギャルマインド診断"/>
+  <meta property="og:description" content="1問ずつ可愛く回答→レベル画像とギャル語MAXコメントが出るよ💖"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="./assets/og_default.png"/>
+  <meta name="theme-color" content="#ff8adf"/>
   <style>
-    :root{--bg:#0f0f12;--card:#17171c;--ink:#f5f7fb;--muted:#b7bac6;--brand:#ff5bd5;--accent:#7cf7ff}
+    /* ====== Theme: 白×ピンク×パープル（明るいギャル） ====== */
+    :root{
+      --bg:#fff7fd;            /* 薄いピンク背景 */
+      --card:#ffffff;          /* 真っ白カード */
+      --ink:#3a2a33;           /* こげ茶がかった濃グレー（黒より柔らかい）*/
+      --muted:#7b5b6a;         /* 補助テキスト */
+      --pink:#ff6fbf;          /* メインピンク */
+      --pinka:#ff97d7;         /* アクセントピンク */
+      --purple:#9b5bff;        /* パープル */
+      --sky:#9cf1ff;
+      --radius:22px;
+    }
     *{box-sizing:border-box}
-    body{margin:0;background:
-      radial-gradient(900px 700px at -10% -10%,#18151f,transparent),
-      radial-gradient(900px 700px at 110% -10%,#11202a,transparent),
-      var(--bg);
-      color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Noto Sans JP,Arial}
-    a{color:var(--accent);text-decoration:none}
-    .wrap{max-width:880px;margin:40px auto;padding:0 16px}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);border-radius:18px;box-shadow:0 20px 40px rgba(0,0,0,.35)}
-    header{padding:28px 24px 0}
-    h1{font-size:28px;margin:0}
-    .pill{display:inline-block;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;background:linear-gradient(90deg,var(--brand),#9b5bff);padding:6px 10px;border-radius:999px;color:#111;margin-bottom:8px}
-    .lead{color:var(--muted);margin:8px 0 18px}
-    .body{padding:8px 24px 24px}
-    .grid{display:grid;gap:16px}
-    @media(min-width:760px){.grid{grid-template-columns:1fr 1fr}}
-    .q{padding:16px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(0,0,0,.15)}
-    .q h3{font-size:16px;margin:0 0 10px}
-    .scale{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-    .scale label{display:flex;align-items:center;gap:8px;background:#121217;border:1px solid rgba(255,255,255,.08);padding:8px 10px;border-radius:10px;cursor:pointer}
-    .scale input{accent-color:var(--brand)}
-    .actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-    .btn{background:linear-gradient(90deg,var(--brand),#9b5bff);color:#111;border:none;padding:12px 16px;border-radius:12px;font-weight:800;cursor:pointer}
-    .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,.18);color:var(--ink)}
-    .muted{color:var(--muted)}
+    html,body{margin:0;height:100%;}
+    body{
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(255,221,244,.8), transparent 60%),
+        radial-gradient(1000px 700px at 110% -20%, rgba(201,179,255,.55), transparent 55%),
+        var(--bg);
+      color:var(--ink);
+      font:16px/1.65 "Noto Sans JP", system-ui, -apple-system, Segoe UI, Roboto, "Hiragino Sans", "Yu Gothic UI", "Yu Gothic", sans-serif;
+      letter-spacing:.01em;
+    }
+    a{color:var(--purple);text-decoration:none}
+    .wrap{max-width:960px;margin:0 auto;padding:24px;}
+    .app{background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.96));border:2px solid #ffe0f1;border-radius:var(--radius);box-shadow:0 20px 50px rgba(255,110,190,.15);overflow:hidden}
+    header{padding:22px 20px 8px;border-bottom:1px dashed #ffd0eb;background:
+      linear-gradient(180deg, rgba(255,255,255,.85), rgba(255,255,255,1));}
+    .logo{display:flex;align-items:center;gap:10px}
+    .logo-badge{background:linear-gradient(90deg,#ffd4f0,#fce7ff,#eae3ff);border:1px solid #ffc5ea;color:#7a4667;padding:6px 10px;border-radius:999px;font-weight:800;font-size:12px;box-shadow:0 6px 20px rgba(255,160,220,.25)}
+    h1{margin:6px 0 4px;font-size:26px; font-weight:900; letter-spacing:.02em}
+    .lead{color:var(--muted);margin:0 0 10px}
+
+    .section{padding:16px 20px 22px}
+    .card{background:var(--card);border:2px solid #ffe9f7;border-radius:var(--radius);box-shadow:0 12px 30px rgba(255,110,190,.12);padding:16px}
+    .grid-2{display:grid;gap:14px}
+    @media(min-width:800px){.grid-2{grid-template-columns:1fr 1fr}}
+
+    label.f{display:flex;flex-direction:column;gap:6px}
+    label.f span{font-size:13px;color:#7a5870}
+    input[type="text"], input[type="email"], select{padding:12px 14px;border-radius:14px;border:1.6px solid #ffd0eb;background:#fff;outline:none;color:var(--ink)}
+    input:focus, select:focus{box-shadow:0 0 0 4px rgba(255,149,215,.25)}
+
+    /* Progress */
+    .progress{display:flex;align-items:center;gap:10px;margin:6px 0 0}
+    .bar{flex:1;height:10px;background:#ffe3f3;border-radius:999px;overflow:hidden;border:1px solid #ffd0eb}
+    .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--pinka),var(--purple));transition:width .35s ease}
+    .step{font-size:12px;color:#7a5870}
+
+    /* Q flow */
+    .qwrap{padding:6px 0}
+    .qcard{background:var(--card);border:2px solid #fbd4f0;border-radius:22px; box-shadow:0 10px 24px rgba(155,91,255,.12);padding:18px}
+    .qhead{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+    .chip{display:inline-flex;align-items:center;gap:6px;background:#fff; border:1.6px solid #ffd0eb; padding:6px 10px;border-radius:999px;font-size:12px;color:#7a5870}
+    .qtext{font-size:18px;font-weight:800;margin:4px 0 10px}
+
+    /* Heart rating */
+    .hearts{display:flex;gap:8px;flex-wrap:wrap}
+    .heart{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;cursor:pointer;border:1.6px solid #ffd0eb;background:#fff;transition:transform .08s ease, box-shadow .2s}
+    .heart[data-active="true"], .heart:hover{box-shadow:0 8px 20px rgba(255,110,190,.27); transform:translateY(-1px);background:linear-gradient(180deg,#fff,#fff0f7)}
+    .heart span{font-size:22px}
+
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .btn{background:linear-gradient(90deg, var(--pinka), var(--purple)); color:#fff; border:none; padding:12px 16px; border-radius:14px; font-weight:900; letter-spacing:.03em; cursor:pointer; box-shadow:0 10px 24px rgba(155,91,255,.26)}
+    .btn.subtle{background:#fff;color:#7a5870;border:2px solid #ffd0eb;box-shadow:none}
+
+    /* Result */
     .result{display:none}
     .result.active{display:block}
-    .res-card{display:grid;gap:16px;grid-template-columns:160px 1fr;align-items:center}
-    .res-card img{width:100%;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:#111}
-    .small{font-size:12px}
-    footer{opacity:.7;text-align:center;margin:28px 0}
-    .hr{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);margin:16px 0}
-    .badge{display:inline-block;background:#0c0c10;border:1px solid rgba(255,255,255,.12);padding:4px 8px;border-radius:999px;font-size:12px}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#111;border:1px solid rgba(255,255,255,.18);padding:10px 14px;border-radius:10px;display:none}
-    .toast.show{display:block}
+    .rgrid{display:grid;gap:16px}
+    @media(min-width:880px){.rgrid{grid-template-columns:220px 1fr}}
+    .rimg{border-radius:18px;border:2px solid #ffd0eb;background:#fff;overflow:hidden}
+    .badge{display:inline-block;background:#fff;border:2px solid #ffd0eb;border-radius:999px;padding:6px 10px;font-size:12px;color:#7a5870;margin-right:8px}
+    .rg{margin-top:8px}
+    .comment{background:linear-gradient(180deg,#fff,#fff5fb);border:2px solid #ffd0eb;border-radius:18px;padding:12px}
+    .muted{color:#7a5870}
+    footer{text-align:center;color:#8a6a7a;opacity:.85;padding:18px}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card">
+    <div class="app">
       <header>
-        <span class="pill">ギャル式®︎</span>
-        <h1>ギャルマインド診断（10段階・100点満点）</h1>
-        <p class="lead">19問に1〜5で回答 → <b>Q1〜18は5点満点</b>、<b>Q19だけ2倍</b>で計算して<b>100点満点</b>。スコアに応じて<b>10段階レベル画像</b>を表示します。</p>
-      </header>
-      <div class="body">
-        <p class="muted">所要：2分／選択式のみ。直近の結果は端末に保存（localStorage）。任意でGoogleスプレッドシートに保存も可能（GAS設定）。</p>
-        <div class="hr"></div>
-
-        <form id="quiz" class="grid" autocomplete="off"></form>
-
-        <div class="hr"></div>
-        <div class="actions">
-          <button id="submitBtn" class="btn" type="button">判定する</button>
-          <button id="resetBtn" class="btn secondary" type="button">リセット</button>
-          <span class="muted small">※各設問は1〜5で必須入力</span>
+        <div class="logo">
+          <span class="logo-badge">ギャル式®︎</span>
         </div>
+        <h1>ギャルマインド診断 🌈💖（10段階・100点満点）</h1>
+        <p class="lead">1問ずつ、ハートでサクサク答えてね💅 Q1-18は<mark>💗×5段階</mark>、Q19は<mark>💗×10段階</mark>だよ！</p>
+        <div class="progress"><div class="bar"><i id="bar"></i></div><div class="step"><span id="stepNow">0</span>/<span id="stepMax">19</span></div></div>
+      </header>
 
-        <section id="result" class="result" aria-live="polite">
-          <div class="hr"></div>
-          <div class="res-card">
-            <img id="resultImg" alt="診断結果画像" src="" />
-            <div>
-              <h2 id="resultTitle">結果</h2>
-              <p id="resultDesc" class="muted"></p>
-              <div class="chips" style="margin:10px 0">
-                <span id="chipLevel" class="badge"></span>
-                <span id="chipScore" class="badge"></span>
-              </div>
-              <div class="actions">
-                <button id="copyLink" class="btn secondary" type="button">結果リンクをコピー</button>
-                <a id="tweet" class="btn" href="#" target="_blank" rel="noopener">Xでシェア</a>
-              </div>
-              <p class="small muted" style="margin-top:8px">画像は <code>./assets/img_lv{1..10}.png</code> を用意してください。</p>
-            </div>
+      <!-- 基本情報 -->
+      <section class="section">
+        <div class="card">
+          <h2 style="margin:0 0 10px; font-weight:900">まずは基本情報教えて〜💖</h2>
+          <div class="grid-2">
+            <label class="f">お名前<span>ニックネームでもOK</span>
+              <input id="f_name" type="text" placeholder="例）ギャル子" required>
+            </label>
+            <label class="f">メールアドレス<span>結果の共有や集計用</span>
+              <input id="f_email" type="email" placeholder="example@company.jp" required>
+            </label>
+            <label class="f">所属（会社・部署など）
+              <input id="f_org" type="text" placeholder="例）CGOドットコム / 企画部">
+            </label>
+            <label class="f">役職
+              <input id="f_title" type="text" placeholder="例）ディレクター">
+            </label>
+            <label class="f">性別
+              <select id="f_gender">
+                <option value="">選択しない</option>
+                <option>女性</option>
+                <option>男性</option>
+                <option>ノンバイナリー/他</option>
+              </select>
+            </label>
+            <label class="f">年齢
+              <input id="f_age" type="text" inputmode="numeric" placeholder="例）24">
+            </label>
           </div>
-        </section>
-      </div>
+          <div class="actions"><button id="start" class="btn" type="button">診断スタート💖</button></div>
+        </div>
+      </section>
+
+      <!-- 質問フロー -->
+      <section class="section">
+        <div id="qwrap" class="qwrap" aria-live="polite"></div>
+        <div class="actions" id="nav" style="display:none">
+          <button id="prev" class="btn subtle" type="button">戻る</button>
+          <button id="next" class="btn" type="button">次へ💅</button>
+        </div>
+      </section>
+
+      <!-- 結果 -->
+      <section class="section result" id="result">
+        <div class="rgrid">
+          <div class="rimg"><img id="resultImg" alt="結果画像" style="width:100%; display:block"></div>
+          <div>
+            <h2 style="margin:0 0 8px; font-weight:900">診断結果でたよ〜〜〜！💖</h2>
+            <div class="rg">
+              <span class="badge" id="badgeLevel">Lv?</span>
+              <span class="badge" id="badgeScore">? / 100</span>
+            </div>
+            <p class="comment" id="commentGal">コメント（ギャル）</p>
+            <p class="muted" id="commentBiz" style="margin-top:8px"></p>
+            <div class="actions" style="margin-top:10px">
+              <button id="copyLink" class="btn subtle" type="button">結果リンクをコピー</button>
+              <a id="tweet" class="btn" target="_blank" rel="noopener">Xで自慢する🌈</a>
+            </div>
+            <p class="muted" style="font-size:12px;margin-top:8px">画像は <code>./assets/img_lv{1..10}.png</code> を用意してね。</p>
+          </div>
+        </div>
+      </section>
+
+      <footer>© CGOドットコム｜ギャル式®︎</footer>
     </div>
-    <footer class="small">© CGOドットコム｜ギャル式®︎</footer>
   </div>
 
-  <div class="toast" id="toast">リンクをコピーしました！</div>
-
   <script>
-  // ====== 設定 ======
-  const QUESTIONS = [
-    '会社の中で「やってみたい💝」と思うことがある～～～？',
-    '今やっている仕事スキ？★',
-    '今よりもっと👆アゲ👆になりたい？',
-    '「私がやりたい仕事はこれダヨ❕」って言える？',
-    '社内で「この人の話聞いてみたい☺」って思ったときに、すぐに連絡できる✉？',
-    '自分最高ジャン～♥って思う？',
-    '社内飲み会（食事会）で、周りに合わせず、自分が好きな食べ物/飲み物🥃を頼める？',
-    'ステキな意見を言った人に「いいじゃん～🎵」って言える？',
-    '多少無理なことでも「ウチらならできるっしょ💪」って思える？',
-    '自分よりエライ人にも、自信をもって意見が言える✨？',
-    '自分らしい服や持ち物👗を会社でも身に着けている？',
-    '多少凹んでも「這い上がるぞ💪」と力が湧いてくる～？',
-    '自分と違う意見が出たとき「それちがくない～？💦」って言える？',
-    'いやなことにはすかさず「NO❕❕❕」って言える？',
-    '自分はなにか成し遂げられちゃうかも🌎と思ってる～？',
-    '自分の「これだけは譲れないッ❣」ってモノ/コトってある～？',
-    '考えるより体動いちゃう～～～～～？💃',
-    '自分のスキ💝なところ３つ以上いえる～？',
-    '自分の心には「自分軸・直感性・ポジティブ思考」がある～～～？' // Q19（×2倍）
-  ];
+    // ====== 設定 ======
+    const GAS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL'; // 任意: 回答保存
 
-  const GAS_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL'; // 任意: 回答ログ保存先
+    // 質問文：Q1-18 = 5段階（💗×5）、Q19 = 10段階（💗×10）
+    const QUESTIONS = [
+      '会社の中で「やってみたい💝」と思うことがある～～～？',
+      '今やっている仕事スキ？★',
+      '今よりもっと👆アゲ👆になりたい？',
+      '「私がやりたい仕事はこれダヨ❕」って言える？',
+      '社内で「この人の話聞いてみたい☺」って思ったときに、すぐに連絡できる✉？',
+      '自分最高ジャン～♥って思う？',
+      '社内飲み会（食事会）で、周りに合わせず、自分が好きな食べ物/飲み物🥃を頼める？',
+      'ステキな意見を言った人に「いいじゃん～🎵」って言える？',
+      '多少無理なことでも「ウチらならできるっしょ💪」って思える？',
+      '自分よりエライ人にも、自信をもって意見が言える✨？',
+      '自分らしい服や持ち物👗を会社でも身に着けている？',
+      '多少凹んでも「這い上がるぞ💪」と力が湧いてくる～？',
+      '自分と違う意見が出たとき「それちがくない～？💦」って言える？',
+      'いやなことにはすかさず「NO❕❕❕」って言える？',
+      '自分はなにか成し遂げられちゃうかも🌎と思ってる～？',
+      '自分の「これだけは譲れないッ❣」ってモノ/コトってある～？',
+      '考えるより体動いちゃう～～～～～？💃',
+      '自分のスキ💝なところ３つ以上いえる～？',
+      '自分の心には「自分軸・直感性・ポジティブ思考」がある～～～？' // Q19（10段階）
+    ];
 
-  // ====== 描画 ======
-  const quizEl = document.getElementById('quiz');
-  QUESTIONS.forEach((text, i)=>{
-    const id = `q${i+1}`;
-    const block = document.createElement('div');
-    block.className = 'q';
-    block.innerHTML = `
-      <h3>Q${i+1}. ${text}</h3>
-      <div class="scale" role="group" aria-label="${text}">
-        ${[1,2,3,4,5].map(v=>`<label><input type="radio" name="${id}" value="${v}" required> ${v}</label>`).join('')}
-        <span class="muted small">（1 = 当てはまらない ／ 5 = とても当てはまる）</span>
-      </div>`;
-    quizEl.appendChild(block);
-  });
+    const stepMax = QUESTIONS.length; // 19
+    document.getElementById('stepMax').textContent = stepMax;
+    const qwrap = document.getElementById('qwrap');
+    const bar = document.getElementById('bar');
+    const stepNow = document.getElementById('stepNow');
 
-  // ====== スコア計算（100点満点・10段階） ======
-  function getScore(){
-    let total = 0;
-    for(let i=1;i<=QUESTIONS.length;i++){
-      const sel = document.querySelector(`input[name="q${i}"]:checked`);
-      if(!sel) return null;
-      const v = Number(sel.value);
-      if(i === 19){
-        total += v * 2; // Q19は2倍で10点満点扱い
-      }else{
-        total += v;
+    let idx = -1; // -1=まだ始まってない
+    const answers = {};// {1:1..5, ..., 19:1..10}
+
+    // ====== UI: ハート群の生成 ======
+    function makeHearts(n, current){
+      const box = document.createElement('div');
+      box.className = 'hearts';
+      for(let i=1;i<=n;i++){
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'heart';
+        b.dataset.val = String(i);
+        b.dataset.active = current && i<=current ? 'true':'false';
+        const span = document.createElement('span');
+        span.textContent = '💗';
+        b.appendChild(span);
+        b.onclick = ()=>{
+          box.querySelectorAll('.heart').forEach((el)=>{
+            el.dataset.active = Number(el.dataset.val) <= i ? 'true':'false';
+          });
+          box.dataset.value = String(i);
+        };
+        box.appendChild(b);
       }
+      if(current){ box.dataset.value = String(current); }
+      return box;
     }
-    return total; // 最小19, 最大100
-  }
 
-  function scoreToLevel(score){
-    if(score <= 29) return 1;
-    if(score <= 39) return 2;
-    if(score <= 49) return 3;
-    if(score <= 59) return 4;
-    if(score <= 69) return 5;
-    if(score <= 79) return 6;
-    if(score <= 84) return 7;
-    if(score <= 89) return 8;
-    if(score <= 94) return 9;
-    return 10; // 95〜100
-  }
+    // ====== 質問の描画 ======
+    function renderQuestion(){
+      qwrap.innerHTML = '';
+      const n = idx+1; // 1-based
+      stepNow.textContent = n;
+      const pct = Math.round((n-1)/stepMax*100);
+      bar.style.width = pct + '%';
 
-  function renderResult(score){
-    const level = scoreToLevel(score);
-    const img = `./assets/img_lv${level}.png`;
-    const title = 'あなたのギャルマインド結果';
-    const desc = `スコア：<b>${score} / 100</b>　レベル：<b>Lv${level}</b>`;
+      const card = document.createElement('div');
+      card.className = 'qcard';
 
-    document.getElementById('resultImg').src = img;
-    document.getElementById('resultImg').alt = `Lv${level} の結果画像`;
-    document.getElementById('resultTitle').textContent = title;
-    document.getElementById('resultDesc').innerHTML = desc;
-    document.getElementById('chipLevel').textContent = `Lv${level}`;
-    document.getElementById('chipScore').textContent = `${score}/100`;
+      const head = document.createElement('div');
+      head.className = 'qhead';
+      head.innerHTML = `<span class="chip">Q${n}</span>`;
 
-    // シェア用URL
-    const payload = btoa(JSON.stringify({s:score,l:level}));
-    const shareUrl = new URL(location.href.split('#')[0]);
-    shareUrl.searchParams.set('r', payload);
+      const text = document.createElement('div');
+      text.className = 'qtext';
+      text.textContent = QUESTIONS[idx];
 
-    document.getElementById('copyLink').onclick = async ()=>{
-      await navigator.clipboard.writeText(shareUrl.toString());
-      toast('リンクをコピーしました！');
-    };
-    document.getElementById('tweet').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent('【ギャルマインド診断】結果でた♡')}&url=${encodeURIComponent(shareUrl.toString())}`;
+      const heartsNum = (n === 19) ? 10 : 5;
+      const current = answers[n] ? Number(answers[n]) : 0;
+      const hearts = makeHearts(heartsNum, current);
+      hearts.id = 'hearts';
 
-    document.getElementById('result').classList.add('active');
+      card.appendChild(head); card.appendChild(text); card.appendChild(hearts);
+      qwrap.appendChild(card);
 
-    // 保存
-    localStorage.setItem('galmind:last', JSON.stringify({score, level, ts: Date.now()}));
+      document.getElementById('nav').style.display = 'flex';
+      document.getElementById('prev').disabled = (n===1);
+      document.getElementById('next').textContent = (n===stepMax? '結果を見る✨':'次へ💅');
+    }
 
-    // 任意ログ送信
-    sendLog({score, level});
-  }
-
-  async function sendLog(model){
-    if(!GAS_URL || GAS_URL.startsWith('YOUR_')) return;
-    try{
-      await fetch(GAS_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({event:'submit', result:model, meta:{href:location.href, ref:document.referrer}})});
-    }catch(e){ console.warn('log failed', e); }
-  }
-
-  // ====== ボタン ======
-  document.getElementById('submitBtn').onclick = ()=>{
-    const score = getScore();
-    if(score == null){ alert('未回答の設問があります'); return; }
-    renderResult(score);
-    document.getElementById('result').scrollIntoView({behavior:'smooth'});
-  };
-
-  document.getElementById('resetBtn').onclick = ()=>{
-    document.querySelectorAll('#quiz input[type="radio"]:checked').forEach(el=>el.checked=false);
-    document.getElementById('result').classList.remove('active');
-    window.history.replaceState({}, '', location.pathname);
-  };
-
-  // ====== 復元（?r=...） ======
-  (function restore(){
-    const r = new URLSearchParams(location.search).get('r');
-    if(!r) return;
-    try{
-      const obj = JSON.parse(atob(r));
-      if(typeof obj.score === 'number' || typeof obj.s === 'number'){
-        const s = obj.score ?? obj.s;
-        renderResult(s);
-        document.getElementById('result').scrollIntoView({behavior:'smooth'});
+    function saveCurrent(){
+      const n = idx+1;
+      const hearts = document.getElementById('hearts');
+      const v = Number(hearts?.dataset.value || 0);
+      const needed = (n===19)?10:5;
+      if(!v || v<1 || v>needed){
+        alert(`Q${n} のハートを選んでね💗`);
+        return false;
       }
-    }catch(e){ console.warn('restore failed', e); }
-  })();
+      answers[n] = v;
+      return true;
+    }
 
-  function toast(msg){
-    const t = document.getElementById('toast');
-    t.textContent = msg; t.classList.add('show');
-    setTimeout(()=>t.classList.remove('show'), 1600);
-  }
+    function calcScore(){
+      let total = 0;
+      for(let i=1;i<=19;i++){
+        const v = Number(answers[i]||0);
+        if(i===19){ total += v; /* 10段階 -> そのまま */ }
+        else{ total += v; /* 5段階 */ }
+      }
+      // Q1-18は最大 90, Q19は最大 10 → 合計100
+      return total;
+    }
+
+    function scoreToLevel(score){
+      if(score <= 29) return 1;
+      if(score <= 39) return 2;
+      if(score <= 49) return 3;
+      if(score <= 59) return 4;
+      if(score <= 69) return 5;
+      if(score <= 79) return 6;
+      if(score <= 84) return 7;
+      if(score <= 89) return 8;
+      if(score <= 94) return 9;
+      return 10; // 95-100
+    }
+
+    const GAL_COMMENTS = {
+      1:'まだ眠ってるだけ！まずは小さく1アクションでOK💕 今日なにアゲれる？',
+      2:'じわじわ芽生え中〜！褒め言葉は自分にも配ってこ💖',
+      3:'きてるきてる！そのノリに+1の勇気を足したら一気に景色変わる🔥',
+      4:'土台完成！周りの空気より自分の直感優先でいこ💅',
+      5:'安定してアゲ↑ 1日1ギャル行動でもっと波を作ろ🌈',
+      6:'いい感じの自走感！推し×仕事で遊び心ねじ込も💖',
+      7:'巻き込みはじめた！ナイス〜！「一緒にやろ」口癖にしてこ✨',
+      8:'上位ギャル！NOと言える勇気が守ってくれる。好きで世界を塗り替えよ💘',
+      9:'プレミア領域！そのバイブス、社内の灯台。次は後輩のアゲ係お願い💫',
+      10:'神域💖 もうあなたが文化。遠慮せず旗を振ってこ〜〜〜！🔥'
+    };
+    const BIZ_COMMENTS = {
+      1:'最小一歩：今日の会議で1回だけ「私は〜と思います」を言う。',
+      2:'フィードバック設計：1日1回、同僚を具体的に褒める（事実→感謝）。',
+      3:'時間投資：週30分「自分の推し×業務」棚卸し。業務に1つだけ混ぜる。',
+      4:'意思表示：やりたい業務を上長に宣言（文面でOK）。',
+      5:'NO基準：やらない条件を3つ言語化→会議前に共有。',
+      6:'巻き込み：小さなPoCを提案→2名を指名して巻き込む。',
+      7:'仕組み化：成功パターンをテンプレ化→チームに配布。',
+      8:'権限設計：決裁者を先に握る→逆算で計画を引く。',
+      9:'後継育成：ミニ1on1を毎週15分、3名に行う。',
+      10:'文化化：行動規範を短文化→朝会で1フレーズ宣言を運用。'
+    };
+
+    function showResult(){
+      const score = calcScore();
+      const level = scoreToLevel(score);
+      document.getElementById('badgeLevel').textContent = `Lv${level}`;
+      document.getElementById('badgeScore').textContent = `${score} / 100`;
+      document.getElementById('resultImg').src = `./assets/img_lv${level}.png`;
+      document.getElementById('commentGal').textContent = GAL_COMMENTS[level] || '';
+      document.getElementById('commentBiz').textContent = BIZ_COMMENTS[level] || '';
+
+      const payload = btoa(JSON.stringify({s:score,l:level,n:document.getElementById('f_name').value||''}));
+      const link = new URL(location.href.split('#')[0]);
+      link.searchParams.set('r', payload);
+      document.getElementById('copyLink').onclick = async ()=>{
+        try{ await navigator.clipboard.writeText(link.toString()); alert('リンクをコピーしたよ💖'); }catch(e){ alert('コピーできなかった🥲 URLを手で選択してね'); }
+      };
+      document.getElementById('tweet').href = `https://twitter.com/intent/tweet?text=${encodeURIComponent('【ギャルマインド診断】わたしの結果でた💖')}&url=${encodeURIComponent(link.toString())}`;
+
+      // 端末保存
+      localStorage.setItem('galmind:last', JSON.stringify({score,level,ts:Date.now()}));
+
+      // ログ送信（任意/GAS）
+      sendLog({score,level});
+
+      document.getElementById('result').classList.add('active');
+      document.getElementById('result').scrollIntoView({behavior:'smooth'});
+    }
+
+    async function sendLog(model){
+      if(!GAS_URL || GAS_URL.startsWith('YOUR_')) return;
+      try{
+        const payload = {
+          event:'submit',
+          result:model,
+          profile:{
+            name:document.getElementById('f_name').value||'',
+            email:document.getElementById('f_email').value||'',
+            org:document.getElementById('f_org').value||'',
+            title:document.getElementById('f_title').value||'',
+            gender:document.getElementById('f_gender').value||'',
+            age:document.getElementById('f_age').value||''
+          },
+          meta:{href:location.href,ref:document.referrer,ua:navigator.userAgent}
+        };
+        await fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      }catch(e){ console.warn('log failed', e); }
+    }
+
+    // ====== ナビゲーション ======
+    document.getElementById('start').onclick = ()=>{
+      // 必須：名前＆メール
+      const name = document.getElementById('f_name').value.trim();
+      const email = document.getElementById('f_email').value.trim();
+      if(!name || !email){ alert('お名前とメールだけ入れてね💖'); return; }
+      idx = 0; renderQuestion();
+      document.getElementById('start').closest('.card').style.display='none';
+    };
+    document.getElementById('prev').onclick = ()=>{ if(idx<=0) return; if(saveCurrent()){ idx--; renderQuestion(); }};
+    document.getElementById('next').onclick = ()=>{
+      if(!saveCurrent()) return;
+      if(idx>=stepMax-1){ showResult(); return; }
+      idx++; renderQuestion();
+    };
+
+    // 復元（?r=...）
+    (function restore(){
+      const r = new URLSearchParams(location.search).get('r');
+      if(!r) return;
+      try{ const obj = JSON.parse(atob(r)); if(typeof obj.s==='number'){ document.getElementById('start').closest('.card').style.display='none'; idx=stepMax-1; renderQuestion(); showResult(); } }catch(e){}
+    })();
   </script>
 
   <!-- =========================
-  Google Apps Script（無料バックエンド任意）
+  Google Apps Script（無料バックエンド：任意）
   ========================== -->
   <!--
 function doPost(e){
@@ -252,12 +405,10 @@ function doPost(e){
     var ss = SpreadsheetApp.openById('YOUR_SHEET_ID');
     var sh = ss.getSheetByName('responses') || ss.insertSheet('responses');
     if (sh.getLastRow() === 0){
-      sh.appendRow(['ts','event','score','level','href','ref','ua']);
+      sh.appendRow(['ts','event','name','email','org','title','gender','age','score','level','href','ref','ua']);
     }
-    var now = new Date();
-    var m = body.result || {};
-    var meta = body.meta || {};
-    sh.appendRow([ now, body.event||'submit', m.score||m.s, m.level||m.l, meta.href||'', meta.ref||'', e.parameter.ua || '' ]);
+    var p = body.profile||{}; var r = body.result||{}; var m = body.meta||{};
+    sh.appendRow([new Date(), body.event||'submit', p.name||'', p.email||'', p.org||'', p.title||'', p.gender||'', p.age||'', r.score||r.s, r.level||r.l, m.href||'', m.ref||'', m.ua||'']);
     return ContentService.createTextOutput(JSON.stringify({ok:true})).setMimeType(ContentService.MimeType.JSON);
   }catch(err){
     return ContentService.createTextOutput(JSON.stringify({ok:false,error:String(err)})).setMimeType(ContentService.MimeType.JSON);
@@ -265,7 +416,5 @@ function doPost(e){
 }
 function doGet(){ return ContentService.createTextOutput('ok'); }
   -->
-
 </body>
 </html>
-
