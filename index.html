@@ -5,6 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>ギャルマインド診断｜CGOドットコム</title>
   <meta name="description" content="ギャルマインド指数（自分軸・直観性・ポジティブ思考）を測る診断。1問ずつハートでサクサク回答して、結果は10段階レベルと画像で表示！">
+
+<meta property="og:title" content="ギャルマインド診断💖">
+<meta property="og:description" content="あなたのギャルマインド指数をチェックしよ💅✨">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://garmin1016.github.io/galmind/">
+<meta property="og:image" content="https://garmin1016.github.io/galmind/assets/result_level1.png">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ギャルマインド診断💖">
+<meta name="twitter:description" content="あなたのギャルマインド指数をチェックしよ💅✨">
+<meta name="twitter:image" content="https://garmin1016.github.io/galmind/assets/result_level1.png">
+
+  
   <style>
     :root{
       --bg:#fff6fb;
@@ -361,6 +374,13 @@ sendToSheet(payload);
       document.getElementById('scoreTxt').textContent = `あなたのギャルマインド指数：${score} 点`;
       const img = document.getElementById('resultImg');
       img.src = `assets/result_level${lv}.png`;
+      // OGP画像も同じものに切り替える
+document.querySelector('meta[property="og:image"]')
+  ?.setAttribute("content", `https://garmin1016.github.io/galmind/assets/result_level${lv}.png`);
+
+document.querySelector('meta[name="twitter:image"]')
+  ?.setAttribute("content", `https://garmin1016.github.io/galmind/assets/result_level${lv}.png`);
+
       img.alt = `レベル${lv}の結果画像`;
 
       elQuiz.classList.add('hidden');
